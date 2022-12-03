@@ -1,4 +1,4 @@
-import 'package:fits_right/routes/screen_names.dart';
+import 'package:fits_right/core/controllers/verify_otp_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,8 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../utils/app_colors.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
+import '../../../core/controllers/forgot_password_controller.dart';
 import '../../common/widgets/back_button.dart';
 import '../../common/widgets/my_button.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -18,6 +20,9 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   late Size size;
+  final userIdController = Get.put(ForgotPasswordController());
+  final controller = Get.put(VerifyOtpController());
+  String otp = '';
 
   @override
   Widget build(BuildContext context) {
@@ -95,11 +100,7 @@ class _OtpScreenState extends State<OtpScreen> {
       children: [
         Column(
           children: [
-            Text(
-              '03:00',
-              style: textStyle(FontWeight.w700, const Color(0xFF8D99AE),
-                  size.height * 0.040),
-            ),
+            CountdownTimer(endTime: DateTime.now().day + 2),
             _verticalSpace(size.height * 0.010),
             Text(
               'Send again',
@@ -114,7 +115,10 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Widget _otpTextFeild() {
     return OtpTextField(
-      //enabledBorderColor: ,
+      onSubmit: (value) => {
+        otp = value,
+      },
+      // onCodeChanged: (value) => otp = value,
       disabledBorderColor: const Color(0xffBDC6D1),
       showFieldAsBox: true,
       borderRadius: BorderRadius.circular(18),
@@ -131,7 +135,15 @@ class _OtpScreenState extends State<OtpScreen> {
       children: [
         Flexible(
           child: MyButton(
-            onTap: () => Get.toNamed(ScreenNames.createNewPasswordScreen),
+            onTap: () {
+              if (otp.length < 4) {
+                Get.snackbar('Enter Otp', 'Otp Is Empty',
+                    duration: Duration(seconds: 3));
+              } else {
+                print(userIdController.userId);
+                controller.verifyOtp(userIdController.userId, otp);
+              }
+            },
             radius: 15,
             color: AppColors.commonBtnColor,
             height: size.height * 0.07,
@@ -147,3 +159,28 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 }
+
+
+
+// Widget _countDown() {
+//   return Row(
+//     mainAxisAlignment: MainAxisAlignment.center,
+//     children: [
+//       Column(
+//         children: [
+//           Text(
+//             '03:00',
+//             style: textStyle(
+//                 FontWeight.w700, const Color(0xFF8D99AE), size.height * 0.040),
+//           ),
+//           _verticalSpace(size.height * 0.010),
+//           Text(
+//             'Send again',
+//             style: textStyle(
+//                 FontWeight.w600, AppColors.commonBtnColor, size.height * 0.016),
+//           ),
+//         ],
+//       ),
+//     ],
+//   );
+// }

@@ -104,8 +104,8 @@ class _TakeMeasurementState extends State<TakeMeasurement>
                 topLeftRadius: 20),
             tabs: const [
               MeasureTabBar(tabName: 'Waist'),
-              MeasureTabBar(tabName: 'Wips'),
-              MeasureTabBar(tabName: 'Wust'),
+              MeasureTabBar(tabName: 'Hips'),
+              MeasureTabBar(tabName: 'Bust'),
               MeasureTabBar(tabName: 'Low hips'),
               MeasureTabBar(tabName: 'High hips'),
               MeasureTabBar(tabName: 'Collar'),

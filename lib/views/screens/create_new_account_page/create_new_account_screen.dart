@@ -1,6 +1,10 @@
+import 'package:fits_right/core/controllers/sign_up_page_controller.dart';
+import 'package:fits_right/core/models/sign_up.dart';
 import 'package:fits_right/routes/screen_names.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,13 +22,54 @@ class CreateNewAccount extends StatefulWidget {
 
 class _CreateNewAccountState extends State<CreateNewAccount> {
   late Size size;
+  late final TextEditingController nameController;
+  late final TextEditingController passwordController;
+  late final TextEditingController emailController;
+  late final TextEditingController phoneNumberController;
+  final singUpController = Get.put(SignUpPageController());
+  final _signUpFormKey = GlobalKey<FormState>();
+
+  final emailValidator =
+      ValidationBuilder().email().minLength(9).maxLength(50).build();
+  final passwordValidator =
+      ValidationBuilder().minLength(5).maxLength(50).build();
+  final nameValidator = ValidationBuilder().minLength(3).maxLength(50).build();
+  final phoneNumberValidator =
+      ValidationBuilder().minLength(11).maxLength(11).build();
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    passwordController = TextEditingController();
+    emailController = TextEditingController();
+    phoneNumberController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    passwordController.dispose();
+    emailController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
-        child: _createNewAccountBody(),
+        child: Obx(() => singUpController.isLoading.value
+            ? Container(
+                height: size.height,
+                width: size.width,
+                child: Center(
+                    child: SpinKitCubeGrid(
+                  color: AppColors.commonBtnColor,
+                )))
+            : _createNewAccountBody()),
       )),
     );
   }
@@ -109,21 +154,41 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
   }
 
   Widget _textFeilds() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Flexible(child: AppTextFeild(hint: 'Full Name')),
-        _verticalSpace(size.height * 0.015),
-        const Flexible(child: AppTextFeild(hint: 'Email')),
-        _verticalSpace(size.height * 0.015),
-        const Flexible(child: AppTextFeild(hint: 'Phone Number')),
-        _verticalSpace(size.height * 0.015),
-        const Flexible(
-            child: AppTextFeild(
-          hint: 'Password',
-          suffix: Icon(Icons.remove_red_eye_sharp),
-        )),
-      ],
+    return Form(
+      key: _signUpFormKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+              child: AppTextFeild(
+            hint: 'Full Name',
+            controller: nameController,
+            validator: nameValidator,
+          )),
+          _verticalSpace(size.height * 0.015),
+          Flexible(
+              child: AppTextFeild(
+            hint: 'Email',
+            controller: emailController,
+            validator: emailValidator,
+          )),
+          _verticalSpace(size.height * 0.015),
+          Flexible(
+              child: AppTextFeild(
+            hint: 'Phone Number',
+            controller: phoneNumberController,
+            validator: phoneNumberValidator,
+          )),
+          _verticalSpace(size.height * 0.015),
+          Flexible(
+              child: AppTextFeild(
+            hint: 'Password',
+            controller: passwordController,
+            validator: passwordValidator,
+            suffix: Icon(Icons.remove_red_eye_sharp),
+          )),
+        ],
+      ),
     );
   }
 
@@ -132,7 +197,22 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
       children: [
         Flexible(
           child: MyButton(
-              onTap: () => Get.toNamed(ScreenNames.homeScreen),
+              onTap: () {
+                if (_signUpFormKey.currentState!.validate()) {
+                  singUpController.singUpWithApi(SignUpModel(
+                      fullName: nameController.text.toString(),
+                      userEmail: emailController.text.toString(),
+                      userPassword: passwordController.text.toString(),
+                      userPhone: phoneNumberController.text.toString()));
+
+                  print(nameController.text);
+                  print(emailController.text);
+                  print(passwordController.text);
+                  print(phoneNumberController.text);
+                } else {
+                  Get.snackbar('Error', 'Check Entered Feilds');
+                }
+              },
               radius: 15,
               color: AppColors.commonBtnColor,
               height: size.height * 0.07,

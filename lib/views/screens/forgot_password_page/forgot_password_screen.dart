@@ -1,12 +1,13 @@
-import 'package:fits_right/routes/screen_names.dart';
 import 'package:fits_right/views/common/widgets/app_text_feild.dart';
 import 'package:fits_right/views/common/widgets/my_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../utils/app_colors.dart';
+import '../../../core/controllers/forgot_password_controller.dart';
 import '../../common/widgets/back_button.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -17,13 +18,40 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
+  late final TextEditingController _emailController;
   late Size size;
+  final controller = Get.put(ForgotPasswordController());
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(child: SingleChildScrollView(child: forgotScreenBody())),
+      body: SafeArea(
+          child: SingleChildScrollView(
+              child: Obx(
+        () => controller.isLoading.value
+            ? Container(
+                height: size.height,
+                width: size.width,
+                child: Center(
+                    child: SpinKitCubeGrid(
+                  color: AppColors.commonBtnColor,
+                )))
+            : forgotScreenBody(),
+      ))),
     );
   }
 
@@ -96,7 +124,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Widget enterEmail() {
-    return const AppTextFeild(hint: 'Enter Your Email');
+    return AppTextFeild(
+      hint: 'Enter Your Email',
+      controller: _emailController,
+    );
   }
 
   Widget confirmButton() {
@@ -105,11 +136,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       children: [
         Flexible(
           child: MyButton(
-            onTap: () => Get.toNamed(ScreenNames.otpScreen),
             radius: 15,
             color: AppColors.commonBtnColor,
             height: size.height * 0.07,
             width: size.width,
+            onTap: () {
+              controller.sendOtpToEmail(_emailController.text.toString());
+            },
             child: Text(
               'Confirm',
               style:

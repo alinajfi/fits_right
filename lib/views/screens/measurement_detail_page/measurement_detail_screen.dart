@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:fits_right/routes/screen_names.dart';
 import 'package:fits_right/views/common/dialouges/measurement_screen_dialouge.dart';
 import 'package:fits_right/views/common/widgets/back_button.dart';
 import 'package:flutter/material.dart';
@@ -205,10 +208,16 @@ class _MeasurementDetailState extends State<MeasurementDetail>
       children: [
         Flexible(
           child: MyButton(
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => MeasurementScreenDialog(),
-            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => MeasurementScreenDialog(),
+              );
+              Timer(
+                Duration(seconds: 4),
+                () => Get.offAndToNamed(ScreenNames.shoppingScreen),
+              );
+            },
             radius: 15,
             color: AppColors.commonBtnColor,
             height: size.height * 0.07,

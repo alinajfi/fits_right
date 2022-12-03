@@ -118,6 +118,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_countdown_timer:
+    dependency: "direct main"
+    description:
+      name: flutter_countdown_timer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -132,6 +139,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -144,6 +158,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fluttertoast:
+    dependency: "direct main"
+    description:
+      name: fluttertoast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.1"
+  form_validator:
+    dependency: "direct main"
+    description:
+      name: form_validator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   get:
     dependency: "direct main"
     description:
@@ -159,7 +187,7 @@ packages:
     source: hosted
     version: "3.0.1"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -326,13 +354,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
-  progress_dialog:
-    dependency: "direct main"
-    description:
-      name: progress_dialog
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.4"
   sky_engine:
     dependency: transitive
     description: flutter

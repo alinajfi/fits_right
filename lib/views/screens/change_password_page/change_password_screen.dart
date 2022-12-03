@@ -23,13 +23,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(child: _changePasswordBody()),
+      body:
+          SafeArea(child: SingleChildScrollView(child: _changePasswordBody())),
     );
   }
 
   Widget _changePasswordBody() {
     return SizedBox(
-      height: size.height,
+      height: size.height * 0.95,
       child: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: size.width * 0.03, vertical: size.height * 0.03),

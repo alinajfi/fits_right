@@ -1,10 +1,10 @@
+import 'package:fits_right/views/common/dialouges/app_dialog.dart';
 import 'package:fits_right/views/common/widgets/app_drawer.dart';
 import 'package:fits_right/views/common/widgets/app_menu_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../routes/screen_names.dart';
 import '../../../utils/app_colors.dart';
 import '../../common/widgets/my_button.dart';
 
@@ -97,7 +97,15 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
       children: [
         Flexible(
           child: MyButton(
-            onTap: () => Get.toNamed(ScreenNames.addMemberScreen),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AppDialog(
+                    onTap: () => Get.back(),
+                    description:
+                        'He is a member and we forwarded an email to the member to allow you to see their sizes.'),
+              );
+            },
             radius: 15,
             color: AppColors.commonBtnColor,
             height: size.height * 0.07,

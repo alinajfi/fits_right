@@ -1,3 +1,4 @@
+import 'package:fits_right/core/controllers/login_page_controller.dart';
 import 'package:fits_right/routes/screen_names.dart';
 import 'package:fits_right/utils/app_colors.dart';
 import 'package:fits_right/views/common/widgets/app_text_feild.dart';
@@ -5,7 +6,9 @@ import 'package:fits_right/views/common/widgets/back_button.dart';
 import 'package:fits_right/views/common/widgets/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,6 +21,28 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late Size size;
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  final loginController = Get.put(LoginController());
+  final _loginformKey = GlobalKey<FormState>();
+  final emailValidator =
+      ValidationBuilder().email().minLength(9).maxLength(50).build();
+  final passwordValidator =
+      ValidationBuilder().minLength(5).maxLength(50).build();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +54,17 @@ class _LoginScreenState extends State<LoginScreen> {
             physics: viewInsets > 0
                 ? const BouncingScrollPhysics()
                 : const NeverScrollableScrollPhysics(),
-            child: _loginScreenBody()),
+            child: Obx(
+              () => loginController.isLoading.value
+                  ? Container(
+                      height: size.height,
+                      width: size.width,
+                      child: Center(
+                          child: SpinKitCubeGrid(
+                        color: AppColors.commonBtnColor,
+                      )))
+                  : _loginScreenBody(),
+            )),
       ),
     );
   }
@@ -101,26 +136,39 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget textFeilds() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Flexible(child: AppTextFeild(hint: 'Email / Phone Number')),
-        const Flexible(child: AppTextFeild(hint: 'Password')),
-        Flexible(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            GestureDetector(
-              onTap: () => Get.toNamed(ScreenNames.forogotScreen),
-              child: Text(
-                'Forgot Password?',
-                style: textStyle(FontWeight.w600, const Color(0xFF000000),
-                    size.height * 0.016),
+    return Form(
+      key: _loginformKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+              child: AppTextFeild(
+            hint: 'Email / Phone Number',
+            controller: _emailController,
+            validator: emailValidator,
+          )),
+          Flexible(
+              child: AppTextFeild(
+            hint: 'Password',
+            controller: _passwordController,
+            validator: passwordValidator,
+          )),
+          Flexible(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () => Get.toNamed(ScreenNames.forogotScreen),
+                child: Text(
+                  'Forgot Password?',
+                  style: textStyle(FontWeight.w600, const Color(0xFF000000),
+                      size.height * 0.016),
+                ),
               ),
-            ),
-          ],
-        ))
-      ],
+            ],
+          ))
+        ],
+      ),
     );
   }
 
@@ -130,11 +178,18 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Flexible(
           child: MyButton(
-              onTap: () => Get.toNamed(ScreenNames.selectGenderScreen),
               radius: 15,
               color: AppColors.commonBtnColor,
               height: size.height * 0.07,
               width: size.width,
+              onTap: () {
+                if (_loginformKey.currentState!.validate()) {
+                  loginController.loginWithApi(
+                      _emailController.text, _passwordController.text);
+                } else {
+                  Get.snackbar('Error', 'Check Entered Feilds');
+                }
+              },
               child: Text(
                 'Sign In',
                 style: textStyle(
@@ -192,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  textStyle(FontWeight weight, Color color, double size) {
+  TextStyle textStyle(FontWeight weight, Color color, double size) {
     return GoogleFonts.inter(fontWeight: weight, color: color, fontSize: size);
   }
 
