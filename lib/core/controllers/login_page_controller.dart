@@ -7,16 +7,17 @@ import 'package:http/http.dart' as http;
 import '../services/api_services/services.dart';
 
 class LoginController extends GetxController {
-  ApiServices _apiServices = ApiServices();
+  final ApiServices _apiServices = ApiServices();
   var isLoading = false.obs;
+  var obesecureText = false.obs;
   late http.Response response;
 
   void loginWithApi(String email, String password) async {
     isLoading.value = true;
-    print('login api controller body');
+    //  print('login api controller body');
     response =
         await _apiServices.loginWithApi(email: email, password: password);
-    print(response.statusCode);
+    // print(response.statusCode);
 
     if (response.statusCode == 200) {
       isLoading.value = false;
@@ -25,7 +26,12 @@ class LoginController extends GetxController {
       isLoading.value = false;
       var data = jsonDecode(response.body);
       Get.snackbar('Error', data["message"],
-          snackPosition: SnackPosition.TOP, duration: Duration(seconds: 3));
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3));
     }
+  }
+
+  void isObsecure(bool obesecure) {
+    obesecureText.value = obesecure;
   }
 }

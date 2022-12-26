@@ -21,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late Size size;
+  bool obesecure = true;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   final loginController = Get.put(LoginController());
@@ -56,10 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 : const NeverScrollableScrollPhysics(),
             child: Obx(
               () => loginController.isLoading.value
-                  ? Container(
+                  ? SizedBox(
                       height: size.height,
                       width: size.width,
-                      child: Center(
+                      child: const Center(
                           child: SpinKitCubeGrid(
                         color: AppColors.commonBtnColor,
                       )))
@@ -147,12 +148,32 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: _emailController,
             validator: emailValidator,
           )),
-          Flexible(
-              child: AppTextFeild(
-            hint: 'Password',
-            controller: _passwordController,
-            validator: passwordValidator,
-          )),
+          Flexible(child: Obx(() {
+            return AppTextFeild(
+              maxLines: 1,
+              obesecure: loginController.obesecureText.value,
+              hint: 'Password',
+              controller: _passwordController,
+              validator: passwordValidator,
+              suffix: GestureDetector(
+                  onTap: () {
+                    if (loginController.obesecureText.value == false) {
+                      loginController.obesecureText.value = true;
+                    } else {
+                      loginController.obesecureText.value = false;
+                    }
+                  },
+                  child: loginController.obesecureText.value
+                      ? const Icon(
+                          Icons.visibility_off,
+                          color: Colors.grey,
+                        )
+                      : const Icon(
+                          Icons.visibility,
+                          color: Colors.grey,
+                        )),
+            );
+          })),
           Flexible(
               child: Row(
             mainAxisAlignment: MainAxisAlignment.end,

@@ -8,15 +8,16 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class SignUpPageController extends GetxController {
-  ApiServices _apiServices = ApiServices();
+  final ApiServices _apiServices = ApiServices();
   var isLoading = false.obs;
   late http.Response response;
+  var obesecureText = false.obs;
 
   void singUpWithApi(SignUpModel model) async {
-    print('Sign up with api Controller body');
+    // print('Sign up with api Controller body');
     isLoading.value = true;
     response = await _apiServices.signUpWithApi(model);
-    print(response.statusCode);
+    // print(response.statusCode);
 
     if (response.statusCode == 200) {
       isLoading.value = false;
@@ -26,8 +27,12 @@ class SignUpPageController extends GetxController {
       var data = jsonDecode(response.body);
       Get.snackbar('Error', data["message"],
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           backgroundColor: AppColors.commonBtnColor.withOpacity(0.5));
     }
+  }
+
+  void isObsecure(bool obesecure) {
+    obesecureText.value = obesecure;
   }
 }

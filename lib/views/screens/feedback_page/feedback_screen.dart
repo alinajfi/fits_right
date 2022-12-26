@@ -1,4 +1,4 @@
-import 'package:fits_right/views/common/dialouges/app_dialog.dart';
+import 'package:fits_right/core/controllers/feedback_controller.dart';
 import 'package:fits_right/views/common/widgets/app_drawer.dart';
 import 'package:fits_right/views/common/widgets/app_menu_button.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +17,20 @@ class FeedBackScreen extends StatefulWidget {
 
 class _FeedBackScreenState extends State<FeedBackScreen> {
   late Size size;
+  final controller = Get.put(FeedBackController());
+  late final feedBackTextController;
+
+  @override
+  void initState() {
+    super.initState();
+    feedBackTextController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    feedBackTextController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,24 +111,23 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
       children: [
         Flexible(
           child: MyButton(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AppDialog(
-                    onTap: () => Get.back(),
-                    description:
-                        'He is a member and we forwarded an email to the member to allow you to see their sizes.'),
-              );
-            },
             radius: 15,
             color: AppColors.commonBtnColor,
             height: size.height * 0.07,
             width: size.width,
-            child: Text(
-              'Send',
-              style:
-                  textStyle(FontWeight.w700, Colors.white, size.height * 0.020),
+            child: Obx(
+              () => controller.isLoading.value
+                  ? const CircularProgressIndicator()
+                  : Text(
+                      'Send',
+                      style: textStyle(
+                          FontWeight.w700, Colors.white, size.height * 0.020),
+                    ),
             ),
+            onTap: () {
+              controller.sendFeedback(
+                  '', 'Message', feedBackTextController.text);
+            },
           ),
         ),
       ],
@@ -133,6 +146,7 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
 
   Widget textField() {
     return TextFormField(
+      controller: feedBackTextController,
       maxLines: 40,
       decoration: InputDecoration(
           hintText: 'FeedBack',

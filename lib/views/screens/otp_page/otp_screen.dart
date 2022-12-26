@@ -138,9 +138,10 @@ class _OtpScreenState extends State<OtpScreen> {
             onTap: () {
               if (otp.length < 4) {
                 Get.snackbar('Enter Otp', 'Otp Is Empty',
-                    duration: Duration(seconds: 3));
+                    duration: const Duration(seconds: 3));
               } else {
                 print(userIdController.userId);
+                print(otp.toString());
                 controller.verifyOtp(userIdController.userId, otp);
               }
             },

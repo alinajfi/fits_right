@@ -62,10 +62,10 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
       body: SafeArea(
           child: SingleChildScrollView(
         child: Obx(() => singUpController.isLoading.value
-            ? Container(
+            ? SizedBox(
                 height: size.height,
                 width: size.width,
-                child: Center(
+                child: const Center(
                     child: SpinKitCubeGrid(
                   color: AppColors.commonBtnColor,
                 )))
@@ -181,12 +181,33 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
           )),
           _verticalSpace(size.height * 0.015),
           Flexible(
-              child: AppTextFeild(
-            hint: 'Password',
-            controller: passwordController,
-            validator: passwordValidator,
-            suffix: Icon(Icons.remove_red_eye_sharp),
-          )),
+            child: Obx(() {
+              return AppTextFeild(
+                maxLines: 1,
+                obesecure: singUpController.obesecureText.value,
+                hint: 'Password',
+                controller: passwordController,
+                validator: passwordValidator,
+                suffix: GestureDetector(
+                    onTap: () {
+                      if (singUpController.obesecureText.value == false) {
+                        singUpController.obesecureText.value = true;
+                      } else {
+                        singUpController.obesecureText.value = false;
+                      }
+                    },
+                    child: singUpController.obesecureText.value
+                        ? const Icon(
+                            Icons.visibility_off,
+                            color: Colors.grey,
+                          )
+                        : const Icon(
+                            Icons.visibility,
+                            color: Colors.grey,
+                          )),
+              );
+            }),
+          ),
         ],
       ),
     );
@@ -205,10 +226,10 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
                       userPassword: passwordController.text.toString(),
                       userPhone: phoneNumberController.text.toString()));
 
-                  print(nameController.text);
-                  print(emailController.text);
-                  print(passwordController.text);
-                  print(phoneNumberController.text);
+                  // print(nameController.text);
+                  // print(emailController.text);
+                  // print(passwordController.text);
+                  // print(phoneNumberController.text);
                 } else {
                   Get.snackbar('Error', 'Check Entered Feilds');
                 }

@@ -7,7 +7,7 @@ import '../services/api_services/services.dart';
 import 'package:http/http.dart' as http;
 
 class ForgotPasswordController extends GetxController {
-  ApiServices _apiServices = ApiServices();
+  final ApiServices _apiServices = ApiServices();
   var isLoading = false.obs;
   late http.Response response;
   String userId = '';
@@ -32,7 +32,8 @@ class ForgotPasswordController extends GetxController {
       isLoading.value = false;
       // var data = jsonDecode(response.body.toString());
       Get.snackbar('Error', "",
-          snackPosition: SnackPosition.TOP, duration: Duration(seconds: 3));
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3));
     }
   }
 }
